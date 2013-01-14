@@ -47,6 +47,7 @@ type public XmlProvider(cfg:TypeProviderConfig) as this =
 
     // Use global inference (unify elements in different locations)
     let globalInference = args.[1] :?> bool
+    let culture = args.[3] :?> string
 
     let infered = 
       let sampleList = args.[2] :?> bool
@@ -57,7 +58,7 @@ type public XmlProvider(cfg:TypeProviderConfig) as this =
         |> Seq.fold StructureInference.subtypeInfered StructureInference.Top
 
     let ctx = XmlGenerationContext.Create(domainTy, globalInference)
-    let methResTy, methResConv = XmlTypeBuilder.generateXmlType ctx infered
+    let methResTy, methResConv = XmlTypeBuilder.generateXmlType culture ctx infered
     
     // Generate static Parse method
     let args =  [ ProvidedParameter("source", typeof<string>) ]
@@ -80,7 +81,17 @@ type public XmlProvider(cfg:TypeProviderConfig) as this =
   let parameters = 
     [ ProvidedStaticParameter("Sample", typeof<string>)
       ProvidedStaticParameter("Global", typeof<bool>, parameterDefaultValue = false)
-      ProvidedStaticParameter("SampleList", typeof<bool>, parameterDefaultValue = false) ]
+      ProvidedStaticParameter("SampleList", typeof<bool>, parameterDefaultValue = false)
+      ProvidedStaticParameter("Culture", typeof<string>, "") ]
+
+  let helpText = 
+    """<summary>Typed representation of a XML file</summary>
+       <param name='Sample'>Location of a XML sample file or a string containing sample XML document</param>
+       <param name='Culture'>The culture used for parsing numbers and dates.</param>                     
+       <param name='Global'>If true, the inference unifies all XML elements with the same name</param>                     
+       <param name='SampleList'>If true, the children of the root in the sample document represent individual samples for the inference.</param>"""
+
+  do xmlProvTy.AddXmlDoc helpText
   do xmlProvTy.DefineStaticParameters(parameters, buildTypes)
 
   // Register the main type with F# compiler
