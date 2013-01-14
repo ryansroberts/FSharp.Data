@@ -1,2 +1,2 @@
-nuget pack FSharp.Data.Experimental.nuspec
-nuget push FSharp.Data.Experimental.1.0.1.nupkg
+nuget pack FSharp.Data.nuspec
+nuget push FSharp.Data.1.0.11.nupkg
