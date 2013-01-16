@@ -37,6 +37,8 @@
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')" />
   <ItemGroup>
     <Compile Include="CsvProvider.Parsing.fs" />
+    <Compile Include="CsvProvider.Tests.fs" />
+    <Compile Include="JsonProvider.Tests.fs" />
     <Compile Include="Providers.NameUtils.fs" />
     <Compile Include="Providers.Inference.fs" />
     <None Include="packages.config" />
@@ -44,21 +46,21 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.CodeFormat">
-      <HintPath>..\packages\FSharp.Formatting.1.0.4\lib\net40\FSharp.CodeFormat.dll</HintPath>
+      <HintPath>..\..\packages\FSharp.Formatting.1.0.4\lib\net40\FSharp.CodeFormat.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.CompilerBinding">
-      <HintPath>..\packages\FSharp.Formatting.1.0.4\lib\net40\FSharp.CompilerBinding.dll</HintPath>
+      <HintPath>..\..\packages\FSharp.Formatting.1.0.4\lib\net40\FSharp.CompilerBinding.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FSharp.Data">
-      <HintPath>..\bin\FSharp.Data.dll</HintPath>
+      <HintPath>..\..\bin\v40\FSharp.Data.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Data.Experimental">
       <HintPath>E:\Tomas\Projects\FSharp.Data\bin\FSharp.Data.Experimental.dll</HintPath>
     </Reference>
     <Reference Include="FSharp.Markdown">
-      <HintPath>..\packages\FSharp.Formatting.1.0.4\lib\net40\FSharp.Markdown.dll</HintPath>
+      <HintPath>..\..\packages\FSharp.Formatting.1.0.4\lib\net40\FSharp.Markdown.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
@@ -66,7 +68,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
