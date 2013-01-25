@@ -1,8 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation 2005-2011.
-// This sample code is provided "as is" without warranty of any kind. 
-// We disclaim all warranties, either express or implied, including the 
-// warranties of merchantability and fitness for a particular purpose. 
+// Helper operations for converting string values to other types
 // --------------------------------------------------------------------------------------
 
 namespace FSharp.Data.RuntimeImplementation
@@ -63,5 +60,4 @@ type Operations =
     match opt with 
     | Some v -> v
     | None when typeof<'T> = typeof<string> -> Unchecked.defaultof<'T>
-    | None when typeof<'T> = typeof<DateTime> -> Unchecked.defaultof<'T>
     | _ -> failwithf "Mismatch: %s is missing" name
