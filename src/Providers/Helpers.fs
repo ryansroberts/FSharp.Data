@@ -115,18 +115,12 @@ module internal ReflectionHelpers =
 
   open Microsoft.FSharp.Quotations
 
-  let makeFunc (exprfunc:Expr -> Expr) argType = 
+  let makeFuncDelegate (exprfunc:Expr -> Expr) argType = 
     let var = Var.Global("t", argType)
     let convBody = exprfunc (Expr.Var var)
-    convBody.Type, Expr.Lambda(var, convBody)
+    let typ = typedefof<System.Func<_, _>>.MakeGenericType([| argType; convBody.Type |])
+    convBody.Type, Expr.NewDelegate(typ, [var], convBody)
         
-  let makeMethodCall (typ:Type) name tyargs args =
-    let convMeth = typ.GetMethod(name)
-    let convMeth = 
-      if tyargs = [] then convMeth else
-      convMeth.MakeGenericMethod (Array.ofSeq tyargs)
-    Expr.Call(convMeth, args)
-
 // ----------------------------------------------------------------------------------------------
 
 module ProviderHelpers =

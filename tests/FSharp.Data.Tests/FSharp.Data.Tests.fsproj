@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="CsvProvider.Parsing.fs" />
     <Compile Include="CsvProvider.Tests.fs" />
+    <Compile Include="JsonProvider.Parsing.fs" />
     <Compile Include="JsonProvider.Tests.fs" />
     <None Include="packages.config" />
     <None Include="app.config" />

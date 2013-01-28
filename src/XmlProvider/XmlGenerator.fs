@@ -131,22 +131,18 @@ module internal XmlTypeBuilder =
                     // return array of XmlElement - it might be for example int[])
                     | InferedMultiplicity.Multiple ->
                         let m = ProvidedMethod("Get" + NameUtils.nicePascalName (NameUtils.pluralize name), [], childTy.MakeArrayType())
-                        let convTyp, convFunc = ReflectionHelpers.makeFunc childConv (ctx.Replacer.ToRuntime typeof<XmlElement>)
+                        let convTyp, convFunc = ReflectionHelpers.makeFuncDelegate childConv (ctx.Replacer.ToRuntime typeof<XmlElement>)
                         m.InvokeCode <- fun (Singleton xml) -> 
                           let operationsTyp = ctx.Replacer.ToRuntime typeof<XmlOperations>
-                          ReflectionHelpers.makeMethodCall operationsTyp "ConvertArray"
-                            [ convTyp ] [ xml; Expr.Value(name); convFunc ]
-                          //operationsTyp?ConvertArray (convTyp) (xml, Expr.Value(name), convFunc)
+                          operationsTyp?ConvertArray (convTyp) (xml, name, convFunc)
                         m :> System.Reflection.MemberInfo
 
                     | InferedMultiplicity.OptionalSingle ->
                         let p = ProvidedProperty(NameUtils.nicePascalName name, typedefof<option<_>>.MakeGenericType [| childTy |])
-                        let convTyp, convFunc = ReflectionHelpers.makeFunc childConv (ctx.Replacer.ToRuntime typeof<XmlElement>)
+                        let convTyp, convFunc = ReflectionHelpers.makeFuncDelegate childConv (ctx.Replacer.ToRuntime typeof<XmlElement>)
                         p.GetterCode <- fun (Singleton xml) -> 
                           let operationsTyp = ctx.Replacer.ToRuntime typeof<XmlOperations>
-                          ReflectionHelpers.makeMethodCall operationsTyp "ConvertOption"
-                            [ convTyp ] [ xml; Expr.Value(name); convFunc ]
-                          //operationsTyp?ConvertOption (convTyp) (xml, Expr.Value(name), convFunc)
+                          operationsTyp?ConvertOption (convTyp) (xml, name, convFunc)
                         p :> System.Reflection.MemberInfo
 
                 | _ -> failwith "generateXmlType: Child nodes should be named record types"))

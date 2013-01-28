@@ -1,5 +1,6 @@
 ﻿namespace FSharp.Data.RuntimeImplementation
 
+open System
 open FSharp.Data.Json
 open FSharp.Data.Json.JsonReader
 open FSharp.Data.RuntimeImplementation.TypeInference
@@ -23,22 +24,22 @@ type JsonOperations =
   /// The `packer` function rebuilds representation type (such as
   /// `JsonDocument`) which is then passed to projection function `f`.
   static member ConvertArray<'P, 'R>
-      (value:JsonValue, packer:JsonValue -> 'P, f:'P -> 'R) : 'R[] = 
-    [| for v in value -> f (packer (v)) |]
+      (value:JsonValue, packer:Func<JsonValue,'P>, f:Func<'P, 'R>) : 'R[] = 
+    [| for v in value -> f.Invoke (packer.Invoke (v)) |]
 
   /// Get optional property of a specified type
   static member ConvertOptionalProperty<'P, 'R>
-      (doc:JsonValue, name, packer:JsonValue -> 'P, f:'P -> 'R) : 'R option = 
+      (doc:JsonValue, name, packer:Func<JsonValue, 'P>, f:Func<'P, 'R>) : 'R option = 
     match doc with 
     | JsonValue.Object o -> 
         match o.TryFind name with
         | None | Some JsonValue.Null -> None
-        | Some it -> Some (f (packer it))
+        | Some it -> Some (f.Invoke (packer.Invoke it))
     | _ -> None
 
   /// Returns all array values that match the specified tag
   /// (Follows the same pattern as ConvertXyz functions above)
-  static member GetArrayChildrenByTypeTag(doc:JsonValue, tag, pack, f) = 
+  static member GetArrayChildrenByTypeTag(doc:JsonValue, tag, pack:Func<JsonValue, _>, f:Func<_, _>) = 
     let tag = InferedTypeTag.ParseCode tag
     let matchesTag = function
       | JsonValue.Null -> false
@@ -53,7 +54,7 @@ type JsonOperations =
         ar 
         |> List.filter matchesTag 
         |> Array.ofList
-        |> Array.map (pack >> f)
+        |> Array.map (pack.Invoke >> f.Invoke)
     | _ -> failwith "JSON mismatch: Expected Array node"
 
   /// Returns single or no value from an array matching the specified tag
@@ -65,7 +66,7 @@ type JsonOperations =
 
   /// Returns a single array children that matches the specified tag
   static member GetArrayChildByTypeTag(value:JsonValue, tag) = 
-    match JsonOperations.GetArrayChildrenByTypeTag(value, tag, id, id) with
+    match JsonOperations.GetArrayChildrenByTypeTag(value, tag, new Func<_, _>(id), new Func<_, _>(id)) with
     | [| the |] -> the
     | _ -> failwith "JSON mismatch: Expected single value, but found multiple."
 
